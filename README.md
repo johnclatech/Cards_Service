@@ -1,6 +1,7 @@
 # Cards_Service
 A card Project for my Interview
-the swagger for the Card-service API runs on :
+
+The swagger for the Card-service API runs on :
 http://localhost:8081/swagger-ui/index.html
 
 The Properties File for DB access applications properties does not require you to pass a password
