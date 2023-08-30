@@ -8,17 +8,22 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 @Repository
 @RequiredArgsConstructor
 public class CardSearchDao {
 
+
+    private SearchRequest searchRequest = new SearchRequest();
     private  final EntityManager entityManager;
 
     public List<Card> findAllBySimpleQuery(
@@ -27,7 +32,6 @@ public class CardSearchDao {
             String status,
             String createdBy,
             String creationDate
-
     ){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Card> criteriaQuery = criteriaBuilder.createQuery(Card.class);
@@ -60,15 +64,12 @@ public class CardSearchDao {
         return  query.getResultList();
     }
 
-    public List<Card> findAllByCriteria(
-            SearchRequest searchRequest
-    ){
+    public List<Card> findAllByCriteria(SearchRequest searchRequest){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Card> criteriaQuery = criteriaBuilder.createQuery(Card.class);
         List<Predicate> predicates = new ArrayList<>();
 
         //Select * from cards
-
         Root<Card> root = criteriaQuery.from(Card.class);
 
         if(searchRequest.getName() != null){
@@ -104,4 +105,6 @@ public class CardSearchDao {
         TypedQuery<Card> cardTypedQuery = entityManager.createQuery(criteriaQuery);
         return cardTypedQuery.getResultList();
     }
+
+
 }

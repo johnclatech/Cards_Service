@@ -21,7 +21,9 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Nullable
     private String description;
+    @Nullable
     private String color;
     @Nullable
     private String status;

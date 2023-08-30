@@ -45,7 +45,6 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserDto userDto) {
             validateUserDto(userDto); // Perform validation
             String hashedPassword = passwordEncoder.encode(userDto.getPassword()); // Hash the password
-
             User newUser = new User();
             newUser.setEmail(userDto.getEmail());
             newUser.setPassword(hashedPassword);

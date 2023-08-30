@@ -6,6 +6,7 @@ import com.johncla.cards.auth.AuthenticationService;
 import com.johncla.cards.auth.LoginRequest;
 import com.johncla.cards.dto.UserDto;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 //@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "AuthManager")
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 

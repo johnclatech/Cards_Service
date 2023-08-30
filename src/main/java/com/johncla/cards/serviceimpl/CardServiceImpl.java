@@ -16,14 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 
 @Slf4j
@@ -36,50 +33,63 @@ public class CardServiceImpl implements CardService {
 
     private final CardSearchDao cardSearchDao;
 
-    private final SearchRequest searchRequest;
+    private SearchRequest searchRequest = new SearchRequest();
     @Override
     public List<Card> getAllCards() {
         return cardRepository.findAll();
     }
 
+//    @Override
+//    public List<Card> searchCards(User user, SearchDto searchDto) {
+//        log.info("filter : OrderBy - " +searchDto.getOrderByColumn());
+//        log.info("filter : page  | size - " +searchDto.getPage() +" | " + searchDto.getSize());
+//
+//        searchRequest.setName(searchDto.getName());
+//        searchRequest.setColor(searchDto.getColor());
+//        searchRequest.setStatus(searchDto.getStatus());
+//        searchRequest.setCreationDate(searchDto.getCreationDate());
+//        searchRequest.setCreatedBy(searchDto.getCreatedBy());
+//
+//            String role = user.getRole().toString();
+//            log.info("user present : " + role);
+//            if(role.equals(("ADMIN")) || role.equals(("MEMBER"))){
+//                // Admins have access to all cards
+//                return cardSearchDao.findAllByCriteria(searchRequest);
+//
+//            }else{
+//                throw  new CardsExceptions.ResourceNotFoundException("Card Details Not Found");
+//            }
+//
+//    }
+
+
     @Override
-    public List<Card> searchCards(User user, SearchDto searchDto) {
+    public Page<Card> searchCards(User user, SearchDto searchDto) {
         log.info("filter : OrderBy - " +searchDto.getOrderByColumn());
         log.info("filter : page  | size - " +searchDto.getPage() +" | " + searchDto.getSize());
-        Sort sortBy = Sort.by(Sort.Direction.ASC, searchDto.getOrderByColumn());
-//
-//        Pageable pageable = PageRequest.of(searchDto.getPage(), searchDto.getSize(), sortBy);
-//
-//        Specification<Card> spec = Specification.where(CardSpecifications.userHasAccess(user))
-//                .and(CardSpecifications.nameContains(searchDto.getName()))
-//                .and(CardSpecifications.colorEquals(searchDto.getColor()))
-//                .and(CardSpecifications.statusEquals(searchDto.getStatus()))
-//                .and(CardSpecifications.creationDateEquals(searchDto.getCreationDate()));
-//
-//        Page<Card> cards;
 
-            String role = user.getRole().toString();
-            log.info("user present : " + role);
-            if(role.equals(("ADMIN")) || role.equals(("MEMBER"))){
-                // Admins have access to all cards
-                return cardSearchDao.findAllByCriteria(searchRequest);
-//                cards = cardRepository.findAll(spec, pageable); // Fetch all cards
-//            }else if(role.equals(("MEMBER"))){
-//                // Members have access to cards created by them
-//                cards = cardRepository.findByCreatedBy(spec, pageable,user); // Fetch all cards
-//
-            }else{
-                throw  new CardsExceptions.ResourceNotFoundException("Card Details Not Found");
-            }
+        searchRequest.setName(searchDto.getName());
+        searchRequest.setColor(searchDto.getColor());
+        searchRequest.setStatus(searchDto.getStatus());
+        searchRequest.setCreationDate(searchDto.getCreationDate());
+        searchRequest.setCreatedBy(searchDto.getCreatedBy());
+    Pageable pageable = PageRequest.of(searchDto.getPage(),searchDto.getSize());
+        String role = user.getRole().toString();
+        log.info("user present : " + role);
+        if(role.equals(("ADMIN")) || role.equals(("MEMBER"))){
+            // Admins have access to all cards
+            return cardRepository.findBySimpleCriteria(searchRequest.getName(), searchRequest.getColor(), searchRequest.getStatus(), searchRequest.getCreatedBy(), searchRequest.getCreationDate(), pageable);
+
+        }else{
+            throw  new CardsExceptions.ResourceNotFoundException("Card Details Not Found");
+        }
 
     }
 
     @Override
     public List<Card> getSearchCards(User user, SearchDto searchDto) {
 
-        return cardSearchDao.findAllBySimpleQuery(
-                searchDto.getName(),searchDto.getColor(),searchDto.getStatus(),searchDto.getCreatedBy(),searchDto.getCreationDate()
-        );
+        return cardSearchDao.findAllBySimpleQuery(searchDto.getName(),searchDto.getColor(),searchDto.getStatus(),searchDto.getCreatedBy(),searchDto.getCreationDate());
     }
 
     @Override
@@ -135,7 +145,10 @@ public class CardServiceImpl implements CardService {
     }
 
     private void validateCardDto(CardDto cardDto) {
-        validateColor(cardDto.getColor()); // Validate color format
+        if(cardDto.getColor()!= null){
+            log.info("color is not empty: ");
+            validateColor(cardDto.getColor()); // Validate color format
+        }
     }
 
     private void validateColor(String color) {

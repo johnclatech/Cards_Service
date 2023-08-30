@@ -26,7 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "MemberManagement")
+@Tag(name = "UserManagement")
 public class UserController {
     private final UserServiceImpl userService;
     private Role role;

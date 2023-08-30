@@ -8,8 +8,10 @@ import com.johncla.cards.model.User;
 import com.johncla.cards.service.CardService;
 import com.johncla.cards.serviceimpl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +24,7 @@ import java.util.Optional;
 @RequestMapping("/api/cards")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
+@Tag(name = "CardManagement")
 public class CardController {
     private final CardService cardService;
 
@@ -57,10 +60,10 @@ public class CardController {
 
 
     @RequestMapping(value = "/search-card", method = RequestMethod.PUT)
-    public List<Card> searchCards(@RequestBody SearchDto searchDto) {
+    public Page<Card> searchCards(@RequestBody SearchDto searchDto) {
 //        return cardService.searchCards(getUserContext(), searchDto);
 
-        return  cardService.getSearchCards(getUserContext(),searchDto);
+        return  cardService.searchCards(getUserContext(),searchDto);
     }
 
     @GetMapping("/filterby-idanduser/{cardId}")

@@ -2,6 +2,7 @@ package com.johncla.cards.dao;
 
 import lombok.*;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

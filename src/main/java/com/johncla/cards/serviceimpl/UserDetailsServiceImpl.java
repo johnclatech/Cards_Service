@@ -32,7 +32,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
                 .orElseThrow(() -> new UserExceptions.UserNotFoundException("User not found with email: " + email));
 
-
 //        return new UserPrincipal(user, user.getRole());
 
         List<GrantedAuthority> authorities = new ArrayList<>();
