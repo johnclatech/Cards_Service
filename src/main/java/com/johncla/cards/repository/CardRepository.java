@@ -33,5 +33,5 @@ public interface CardRepository extends JpaRepository<Card, Long>, JpaSpecificat
     Page<Card> findByCreatedBy(Specification<Card> spec, Pageable pageable, User user);
 
     @Query("FROM Card c WHERE c.name=?1 OR c.color = ?2 OR c.status=?3 OR c.createdBy= ?4 OR c.creationDate=?5")
-    public Page<Card> findBySimpleCriteria(String name, String color, String status, String createdBy, String creationDate, Pageable pageable);
+    Page<Card> findBySimpleCriteria(String name, String color, String status, String createdBy, String creationDate, Pageable pageable);
 }

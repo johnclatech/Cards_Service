@@ -7,6 +7,7 @@ import com.johncla.cards.model.Card;
 import com.johncla.cards.model.User;
 import com.johncla.cards.service.CardService;
 import com.johncla.cards.serviceimpl.UserServiceImpl;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -61,14 +62,17 @@ public class CardController {
 
     @RequestMapping(value = "/search-card", method = RequestMethod.PUT)
     public Page<Card> searchCards(@RequestBody SearchDto searchDto) {
-//        return cardService.searchCards(getUserContext(), searchDto);
-
         return  cardService.searchCards(getUserContext(),searchDto);
     }
 
-    @GetMapping("/filterby-idanduser/{cardId}")
-    public Card getCard(@PathVariable Long cardId) {
+    @RequestMapping(value = "/search-paged-card", method = RequestMethod.PUT)
+    @Hidden
+    public Page<Card> searchCardsWithPagination(@RequestBody SearchDto searchDto) {
+        return  cardService.searchCardsWithPagination(getUserContext(),searchDto);
+    }
 
+    @GetMapping("/filterby-idanduser/{cardId}")
+    public Card getCardByIdAndUser(@PathVariable Long cardId) {
         return cardService.getCardByIdAndUser(cardId, getUserContext());
     }
 

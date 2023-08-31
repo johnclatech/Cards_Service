@@ -14,6 +14,9 @@ import java.util.Optional;
 public interface CardService {
 
     List<Card> getAllCards();
+
+    Page<Card> searchCardsWithPagination(User user, SearchDto searchDto);
+
     Page<Card> searchCards(User user, SearchDto searchDto);
 
     List<Card> getSearchCards(User user, SearchDto searchDto);

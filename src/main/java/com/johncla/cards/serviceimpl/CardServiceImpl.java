@@ -5,6 +5,7 @@ import com.johncla.cards.dao.SearchRequest;
 import com.johncla.cards.dto.CardDto;
 import com.johncla.cards.dto.SearchDto;
 import com.johncla.cards.exceptions.CardsExceptions;
+import com.johncla.cards.exceptions.UserExceptions;
 import com.johncla.cards.model.Card;
 import com.johncla.cards.model.User;
 import com.johncla.cards.repository.CardRepository;
@@ -39,28 +40,32 @@ public class CardServiceImpl implements CardService {
         return cardRepository.findAll();
     }
 
-//    @Override
-//    public List<Card> searchCards(User user, SearchDto searchDto) {
-//        log.info("filter : OrderBy - " +searchDto.getOrderByColumn());
-//        log.info("filter : page  | size - " +searchDto.getPage() +" | " + searchDto.getSize());
-//
-//        searchRequest.setName(searchDto.getName());
-//        searchRequest.setColor(searchDto.getColor());
-//        searchRequest.setStatus(searchDto.getStatus());
-//        searchRequest.setCreationDate(searchDto.getCreationDate());
-//        searchRequest.setCreatedBy(searchDto.getCreatedBy());
-//
-//            String role = user.getRole().toString();
-//            log.info("user present : " + role);
-//            if(role.equals(("ADMIN")) || role.equals(("MEMBER"))){
-//                // Admins have access to all cards
-//                return cardSearchDao.findAllByCriteria(searchRequest);
-//
-//            }else{
-//                throw  new CardsExceptions.ResourceNotFoundException("Card Details Not Found");
-//            }
-//
-//    }
+
+    @Override
+    public Page<Card> searchCardsWithPagination(User user, SearchDto searchDto) {
+        log.info("filter : OrderBy - " +searchDto.getOrderByColumn());
+        log.info("filter : page  | size - " +searchDto.getPage() +" | " + searchDto.getSize());
+
+        Pageable pageable = PageRequest.of(searchDto.getPage(),searchDto.getSize());
+
+        searchRequest.setName(searchDto.getName());
+        searchRequest.setColor(searchDto.getColor());
+        searchRequest.setStatus(searchDto.getStatus());
+        searchRequest.setCreationDate(searchDto.getCreationDate());
+        searchRequest.setCreatedBy(searchDto.getCreatedBy());
+        searchRequest.setPageable(pageable);
+
+            String role = user.getRole().toString();
+            log.info("user present : " + role);
+            if(role.equals(("ADMIN")) || role.equals(("MEMBER"))){
+                // Admins have access to all cards
+                return cardSearchDao.findAllByCriteria(searchRequest);
+
+            }else{
+                throw  new UserExceptions.UserNotFoundException("User Not Authorised");
+            }
+
+    }
 
 
     @Override
@@ -73,7 +78,8 @@ public class CardServiceImpl implements CardService {
         searchRequest.setStatus(searchDto.getStatus());
         searchRequest.setCreationDate(searchDto.getCreationDate());
         searchRequest.setCreatedBy(searchDto.getCreatedBy());
-    Pageable pageable = PageRequest.of(searchDto.getPage(),searchDto.getSize());
+
+        Pageable pageable = PageRequest.of(searchDto.getPage(),searchDto.getSize());
         String role = user.getRole().toString();
         log.info("user present : " + role);
         if(role.equals(("ADMIN")) || role.equals(("MEMBER"))){
@@ -81,14 +87,13 @@ public class CardServiceImpl implements CardService {
             return cardRepository.findBySimpleCriteria(searchRequest.getName(), searchRequest.getColor(), searchRequest.getStatus(), searchRequest.getCreatedBy(), searchRequest.getCreationDate(), pageable);
 
         }else{
-            throw  new CardsExceptions.ResourceNotFoundException("Card Details Not Found");
+            throw  new UserExceptions.UserNotFoundException("User Not Authorised");
         }
 
     }
 
     @Override
     public List<Card> getSearchCards(User user, SearchDto searchDto) {
-
         return cardSearchDao.findAllBySimpleQuery(searchDto.getName(),searchDto.getColor(),searchDto.getStatus(),searchDto.getCreatedBy(),searchDto.getCreationDate());
     }
 

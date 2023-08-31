@@ -11,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SearchDto {
+public class  SearchDto {
     @NonNull
     private String name;
     @Nullable
